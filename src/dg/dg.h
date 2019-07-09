@@ -24,6 +24,7 @@
 #include "physics/physics.h"
 #include "numerical_flux/numerical_flux.h"
 #include "parameters/all_parameters.h"
+#include "split_form/split_form.h"
 
 
 namespace PHiLiP {
@@ -94,6 +95,10 @@ public:
     /// Vector of mass matrices.
     /** Contains the mass matrices of each cell.  */
     dealii::TrilinosWrappers::SparseMatrix global_mass_matrix;
+
+
+    /// Vector of split form objects.
+    std::vector<splitform::SplitForm> splitform_list;
 
     /// Evaluates the maximum stable time step
     /*  If exact_time_stepping = true, use the same time step for the entire solution
