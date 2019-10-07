@@ -10,7 +10,7 @@
 - Supported Partial Differential Equations: Linear advection, diffusion, convection-diffusion, Burgers, Euler, TODO: Navier-Stokes.
 - Supported convective numerical fluxes: Lax-Friedrichs, Roe (Harten's entropy fix) for Euler, InProgress: Split-Form
 - Supported diffusive numerical fluxes: Symmetric Interior Penalty
-- Supported elements: LINEs, QUADs, HEXs
+- Supported elements: LINEs, QUADs, HEXs since it uses deal.II
 - Supported refinements: h (size) or p (order).
 
 ## Building/Running the Code
@@ -70,6 +70,7 @@ ROOT$ ctest -R <regex> (Run tests matching regular expression)
 ROOT$ ctest -E <regex> (Exclude tests matching regular expression)
 ROOT$ ctest -V (Enable verbose output from tests)
 ```
+Note that running `ctest` in `Debug` will take forever since some integration tests fully solve nonlinear problems with multiple orders and multiple meshes. It is suggested to perform `ctest` in `Release` mode, and only use `Debug` mode for debugging purposes.
 
 ## Debugging
 
@@ -99,7 +100,7 @@ GDB$ quit
 
 If the error only occurs when using parallelism, you can use the following example command
 ```sh
-mpirun -np 2 xterm -hold -e gdb -ex 'break MPI_Abort' -ex run --args /home/ddong/Codes/PHiLiP_temp/PHiLiP/build_debug/bin/PHiLiP_2D "-i" "/home/ddong/Codes/PHiLiP_temp/PHiLiP/build_de    bug/tests/advection_implicit/2d_advection_implicit_strong.prm"
+mpirun -np 2 xterm -hold -e gdb -ex 'break MPI_Abort' -ex run --args /home/ddong/Codes/PHiLiP_temp/PHiLiP/build_debug/bin/PHiLiP_2D "-i" "/home/ddong/Codes/PHiLiP_temp/PHiLiP/build_debug/tests/advection_implicit/2d_advection_implicit_strong.prm"
 ```
 This launches 2 xterm processes, each of which will launch gdb processes that will run the code and will have a breakpoint when MPI_Abort is encountered.
 

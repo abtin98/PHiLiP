@@ -63,7 +63,7 @@ double GridStudy<dim,nstate>
     int overintegrate = 10;
     dealii::QGauss<dim> quad_extra(dg.max_degree+1+overintegrate);
     //dealii::MappingQ<dim,dim> mappingq_temp(dg.max_degree+1);
-    dealii::FEValues<dim,dim> fe_values_extra(dg.mapping_collection[dg.max_degree], dg.fe_collection[dg.max_degree], quad_extra, 
+    dealii::FEValues<dim,dim> fe_values_extra(*(dg.high_order_grid.mapping_fe_field), dg.fe_collection[dg.max_degree], quad_extra, 
             dealii::update_values | dealii::update_JxW_values | dealii::update_quadrature_points);
     const unsigned int n_quad_pts = fe_values_extra.n_quadrature_points;
     std::array<double,nstate> soln_at_q;
@@ -141,8 +141,7 @@ int GridStudy<dim,nstate>
                 dealii::Triangulation<dim>::smoothing_on_coarsening));
 #endif
         dealii::GridGenerator::subdivided_hyper_cube(grid_super_fine, n_1d_cells[n_grids_input-1]);
-        std::shared_ptr < DGBase<dim, double> > dg_super_fine = DGFactory<dim,double>::create_discontinuous_galerkin(&param, p_end);
-        dg_super_fine->set_triangulation(&grid_super_fine);
+        std::shared_ptr < DGBase<dim, double> > dg_super_fine = DGFactory<dim,double>::create_discontinuous_galerkin(&param, p_end, &grid_super_fine);
         dg_super_fine->allocate_system ();
 
         initialize_perturbed_solution(*dg_super_fine, *physics_double);
@@ -233,8 +232,7 @@ int GridStudy<dim,nstate>
             using ADtype = Sacado::Fad::DFad<double>;
 
             // Create DG object using the factory
-            std::shared_ptr < DGBase<dim, double> > dg = DGFactory<dim,double>::create_discontinuous_galerkin(&param, poly_degree);
-            dg->set_triangulation(&grid);
+            std::shared_ptr < DGBase<dim, double> > dg = DGFactory<dim,double>::create_discontinuous_galerkin(&param, poly_degree, &grid);
             dg->allocate_system ();
             //dg->evaluate_inverse_mass_matrices();
             //
@@ -262,7 +260,7 @@ int GridStudy<dim,nstate>
             int overintegrate = 10;
             dealii::QGauss<dim> quad_extra(dg->max_degree+1+overintegrate);
             //dealii::MappingQ<dim,dim> mappingq(dg->max_degree+1);
-            dealii::FEValues<dim,dim> fe_values_extra(dg->mapping_collection[poly_degree], dg->fe_collection[poly_degree], quad_extra, 
+            dealii::FEValues<dim,dim> fe_values_extra(*(dg->high_order_grid.mapping_fe_field), dg->fe_collection[poly_degree], quad_extra, 
                     dealii::update_values | dealii::update_JxW_values | dealii::update_quadrature_points);
             const unsigned int n_quad_pts = fe_values_extra.n_quadrature_points;
             std::array<double,nstate> soln_at_q;

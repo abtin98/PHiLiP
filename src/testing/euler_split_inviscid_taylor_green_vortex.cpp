@@ -28,8 +28,9 @@ double EulerTaylorGreen<dim, nstate>::compute_kinetic_energy(std::shared_ptr < D
 	// Overintegrate the error to make sure there is not integration error in the error estimate
 	int overintegrate = 10 ;//10;
 	dealii::QGauss<dim> quad_extra(dg->max_degree+1+overintegrate);
-	            dealii::FEValues<dim,dim> fe_values_extra(dealii::MappingQ<dim>(dg->max_degree+overintegrate), dg->fe_collection[poly_degree], quad_extra,
-	            dealii::update_values | dealii::update_JxW_values | dealii::update_quadrature_points);
+    dealii::MappingQ<dim> mappingq(dg->max_degree+overintegrate);
+	dealii::FEValues<dim,dim> fe_values_extra(mappingq, dg->fe_collection[poly_degree], quad_extra,
+	        dealii::update_values | dealii::update_JxW_values | dealii::update_quadrature_points);
 //	dealii::QGauss<dim> quad_extra(dg->fe_system.tensor_degree()+overintegrate);
 //	dealii::FEValues<dim,dim> fe_values_extra(dg->mapping, dg->fe_system, quad_extra,
 //							dealii::update_values | dealii::update_JxW_values | dealii::update_quadrature_points);
@@ -38,10 +39,6 @@ double EulerTaylorGreen<dim, nstate>::compute_kinetic_energy(std::shared_ptr < D
 
 	double total_kinetic_energy = 0;
 
-	// Integrate solution error and output error
-	typename dealii::DoFHandler<dim>::active_cell_iterator
-	cell = dg->dof_handler.begin_active(),
-	endc = dg->dof_handler.end();
 
 	std::vector<dealii::types::global_dof_index> dofs_indices (fe_values_extra.dofs_per_cell);
 
@@ -54,8 +51,9 @@ double EulerTaylorGreen<dim, nstate>::compute_kinetic_energy(std::shared_ptr < D
 	            //const double entropy_inf = tot_pressure_inf*pow(density_inf,-gam);
 	//const double entropy_inf = euler_physics_double.entropy_inf;
 
-	for (; cell!=endc; ++cell) {
+	for (auto cell = dg->dof_handler.begin_active(); cell!=dg->dof_handler.end(); ++cell) {
 
+	    if (!cell->is_locally_owned()) continue;
 		fe_values_extra.reinit (cell);
 		//std::cout << "sitting on cell " << cell->index() << std::endl;
 	    cell->get_dof_indices (dofs_indices);
@@ -102,8 +100,7 @@ int EulerTaylorGreen<dim, nstate>::run_test() const
 
 	grid.refine_global(n_refinements);
 
-	std::shared_ptr < DGBase<dim, double> > dg = DGFactory<dim,double>::create_discontinuous_galerkin(all_parameters, poly_degree);
-	dg->set_triangulation(&grid);
+	std::shared_ptr < PHiLiP::DGBase<dim, double> > dg = PHiLiP::DGFactory<dim,double>::create_discontinuous_galerkin(all_parameters, poly_degree, &grid);
 	dg->allocate_system ();
 
 	std::cout << "Implement initial conditions" << std::endl;
