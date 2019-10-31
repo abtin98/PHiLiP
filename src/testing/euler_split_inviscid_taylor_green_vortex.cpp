@@ -138,12 +138,12 @@ int EulerTaylorGreen<dim, nstate>::run_test() const
 	//ode_solver->advance_solution_time(0.000001);
 	//double initial_energy = compute_energy(dg);
 
-	std::cout << "preparing to advance solution in time" << std::endl;
+	pcout << "preparing to advance solution in time" << std::endl;
 //	//(void) finalTime;
-//	std::cout << "kinetic energy is" << compute_kinetic_energy(dg) <<std::endl;
+//	pcout << "kinetic energy is" << compute_kinetic_energy(dg) <<std::endl;
 //	ode_solver->advance_solution_time(finalTime);
-//	//std::cout << "kinetic energy is" << compute_kinetic_energy(dg) <<std::endl;
-//	std::cout << "kinetic energy is" << compute_kinetic_energy(dg) <<std::endl;
+//	//pcout << "kinetic energy is" << compute_kinetic_energy(dg) <<std::endl;
+//	pcout << "kinetic energy is" << compute_kinetic_energy(dg) <<std::endl;
 
 
 	//currently the only way to calculate energy at each time-step is to advance solution by dt instead of finaltime
@@ -157,8 +157,9 @@ int EulerTaylorGreen<dim, nstate>::run_test() const
 	{
 		ode_solver->advance_solution_time(dt);
 		double current_energy = compute_kinetic_energy(dg,poly_degree);
-		std::cout << "Energy at time " << i * dt << " is " << current_energy << std::endl;
-		myfile << i * dt << " " << current_energy << std::endl;
+		double kinetic_energy_mpi_sum = dealii::Utilities::MPI::sum(current_energy, mpi_communicator);
+		pcout << "Energy at time " << i * dt << " is " << kinetic_energy_mpi_sum << std::endl;
+		myfile << i * dt << " " << kinetic_energy_mpi_sum << std::endl;
 
 	}
 
