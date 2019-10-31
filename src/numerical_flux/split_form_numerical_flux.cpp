@@ -28,8 +28,9 @@ std::array<real, nstate> SplitFormNumFlux<dim,nstate,real>::evaluate_flux(
 	    // Scalar dissipation
 	    std::array<real, nstate> numerical_flux_dot_n;
 	    for (int s=0; s<nstate; s++) {
-	        numerical_flux_dot_n[s] = conv_phys_split_flux[s]*normal_int - 0.5 * conv_max_eig * (soln_ext[s]-soln_int[s]);
+	        numerical_flux_dot_n[s] = conv_phys_split_flux[s]*normal_int; //- 0.5 * conv_max_eig * (soln_ext[s]-soln_int[s]);
 	    }
+	    (void) conv_max_eig;
 	   // std::cout << "about to return split num flux" <<std::endl;
 	    return numerical_flux_dot_n;
 	}

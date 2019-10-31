@@ -88,8 +88,8 @@ int EulerTaylorGreen<dim, nstate>::run_test() const
 	double left = 0.0;
 	double right = 2 * dealii::numbers::PI;
 	const bool colorize = true;
-	int n_refinements = 2;
-	unsigned int poly_degree = 1;
+	int n_refinements = 4;
+	unsigned int poly_degree = 3;
 	dealii::GridGenerator::hyper_cube(grid, left, right, colorize);
 
 	std::vector<dealii::GridTools::PeriodicFacePair<typename dealii::Triangulation<PHILIP_DIM>::cell_iterator> > matched_pairs;
