@@ -27,6 +27,6 @@ subsection ODE solver
 
   set ode_solver_type = explicit
 
-  set initial_time_step = 0.001
+  set initial_time_step = 0.01
 
 end
