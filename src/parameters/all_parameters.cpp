@@ -49,7 +49,8 @@ void AllParameters::declare_parameters (dealii::ParameterHandler &prm)
                       " numerical_flux_convervation | "
                       " jacobian_regression |"
                       " advection_periodicity |"
-                      " euler_split_taylor_green"),
+                      " euler_split_taylor_green |"
+                      " collocation"),
                       "The type of test we want to solve. "
                       "Choices are (only run control has been coded up for now)" 
                       " <run_control | " 
@@ -61,7 +62,9 @@ void AllParameters::declare_parameters (dealii::ParameterHandler &prm)
                       "  numerical_flux_convervation | "
                       "  jacobian_regression |"
 					  "  euler_split_taylor_green |"
-					  "  advection_periodicity >.");
+					  "  advection_periodicity |"
+					  "  euler_split_taylor_green |"
+					  "  collocation >.");
 
     prm.declare_entry("pde_type", "advection",
                       dealii::Patterns::Selection(

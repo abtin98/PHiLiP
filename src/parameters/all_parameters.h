@@ -59,6 +59,7 @@ public:
         jacobian_regression,
         burgers_split_form,
         advection_periodicity,
+        collocation
         };
     TestType test_type;
 
